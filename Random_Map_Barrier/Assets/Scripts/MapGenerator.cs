@@ -19,6 +19,7 @@ public class MapGenerator : MonoBehaviour {
 
     }
 
+    //生成地图算法
     void GenerateMap() {
         for (int i = 0; i < mapSize.x; i++) {
             for (int j = 0; j < mapSize.y; j++) {
