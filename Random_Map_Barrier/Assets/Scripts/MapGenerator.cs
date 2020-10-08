@@ -13,13 +13,15 @@ public class MapGenerator : MonoBehaviour {
     public Queue<Coord> shuffleQueue;//队列
     //障碍物预制体
     public GameObject obsPrefab;
-    public float obsCount;
+    public float obsCount = 10;//障碍物数量
 
-    
+    //障碍物前景色和背景色
+    public Color foregroundColor, backgroundColor;
+    public float minObsHeight = 1, maxObsHeight;
+
     // Start is called before the first frame update
     void Start() {
         obsPrefab = Resources.Load<GameObject>("Prefabs/Obstacle");//障碍物
-        obsCount = 10;
         tilePrefab = Resources.Load<GameObject>("Prefabs/Tile");//地图瓦片
         mapHolder = transform.Find("MapHolder").transform;
         GenerateMap();
@@ -37,7 +39,6 @@ public class MapGenerator : MonoBehaviour {
                 Vector3 newPos = new Vector3(-mapSize.x / 2 + 0.5f + i, 0,-mapSize.y / 2 + 0.5f + j); //计算位置
                 GameObject tile = GameObject.Instantiate(tilePrefab, newPos, Quaternion.Euler(90,0,0), mapHolder);
                 tile.transform.localScale = Vector3.one * (1 - outlinePercent); //间隔效果
-
                 tileCoordsList.Add(new Coord(i,j, tile.transform));
             }
         }
@@ -45,8 +46,17 @@ public class MapGenerator : MonoBehaviour {
         shuffleQueue = new Queue<Coord>(Utils.ShuffleCoords(tileCoordsList.ToArray()));
         for (int i = 0; i < obsCount; i++) {
             Coord randomCoord = GetRandomCoord();
-            Vector3 newPos = new Vector3(-mapSize.x / 2 + 0.5f + randomCoord.x, 0.6f, -mapSize.y / 2 + 0.5f + randomCoord.y); //计算位置
-            GameObject obs = GameObject.Instantiate(obsPrefab, newPos, Quaternion.Euler(90, 0, 0), randomCoord.trs);
+            GameObject obs = GameObject.Instantiate(obsPrefab,randomCoord.trs );
+            //随机高度
+            float randomHeight = UnityEngine.Random.Range(minObsHeight, maxObsHeight);
+            obs.transform.localScale = new Vector3(1,1, randomHeight);
+            obs.transform.localPosition = new Vector3(0, 0, -0.1f - randomHeight/2);
+
+            //随机颜色
+            MeshRenderer mesh = obs.GetComponent<MeshRenderer>();
+            Material mat = mesh.material;
+            float colorPercent = (randomCoord.x / mapSize.x + randomCoord.y / mapSize.y)/2;
+            mat.color = Color.Lerp(foregroundColor, backgroundColor, colorPercent);//插值运算
         }
     }
 
