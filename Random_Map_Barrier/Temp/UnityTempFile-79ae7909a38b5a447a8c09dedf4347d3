@@ -1,17 +1,12 @@
 /target:library
 /nowarn:0169
-/out:Temp/Assembly-CSharp-Editor.dll
+/out:Temp/Assembly-CSharp.dll
 /deterministic
 /debug:portable
 /optimize+
 /nostdlib+
 /preferreduilang:en-US
 /langversion:latest
-/reference:Library/ScriptAssemblies/Assembly-CSharp.dll
-/reference:"C:/Program Files (x86)/Microsoft Visual Studio Tools for Unity/15.0/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll"
-/reference:D:/Unity_WorkStation/Random_Map_Barrier/Random_Map_Barrier/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll
-/reference:E:/U3D2020.1.0f1/Unity/Editor/Data/Managed/UnityEditor.Graphs.dll
-/reference:E:/U3D2020.1.0f1/Unity/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
 /reference:E:/U3D2020.1.0f1/Unity/Editor/Data/Managed/UnityEditor.dll
 /reference:E:/U3D2020.1.0f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll
 /reference:E:/U3D2020.1.0f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.ARModule.dll
@@ -197,9 +192,7 @@
 /reference:Library/ScriptAssemblies/Unity.Timeline.dll
 /reference:Library/ScriptAssemblies/Unity.VSCode.Editor.dll
 /reference:Library/ScriptAssemblies/Unity.VisualStudio.Editor.dll
-/reference:Library/ScriptAssemblies/UnityEditor.TestRunner.dll
 /reference:Library/ScriptAssemblies/UnityEditor.UI.dll
-/reference:Library/ScriptAssemblies/UnityEngine.TestRunner.dll
 /reference:Library/ScriptAssemblies/UnityEngine.UI.dll
 /define:CSHARP_7_3_OR_NEWER
 /define:CSHARP_7_OR_LATER
@@ -264,7 +257,7 @@
 /define:ENABLE_WEBSOCKET_HOST
 /define:ENABLE_WWW
 /define:INCLUDE_DYNAMIC_GI
-/define:NET_4_6
+/define:NET_STANDARD_2_0
 /define:PLATFORM_STANDALONE
 /define:PLATFORM_STANDALONE_WIN
 /define:PLATFORM_SUPPORTS_MONO
@@ -299,4 +292,5 @@
 /define:UNITY_STANDALONE
 /define:UNITY_STANDALONE_WIN
 /define:UNITY_TEAM_LICENSE
-"Assets\BOXOPHOBIC\Skybox Cubemap Extended\Core\Editor\SkyboxExtendedWindows.cs"
+Assets\Scripts\MapGenerator.cs
+Assets\Scripts\Utils.cs
