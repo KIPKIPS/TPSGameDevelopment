@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,21 +10,12 @@ public class MapGenerator : MonoBehaviour {
     [Range(0, 1)] public float outlinePercent  = 0.1f; //地图板块间隔
     public List<Coord> tileCoordsList = new List<Coord>();
 
+    public Queue<Coord> shuffleQueue;//队列
     //障碍物预制体
     public GameObject obsPrefab;
     public float obsCount;
 
-    [System.Serializable]
-    public struct Coord {
-        public int x;
-        public int y;
-        public Transform trs;
-        public Coord(int x,int y,Transform self) {
-            this.x = x;
-            this.y = y;
-            this.trs = self;
-        }
-    }
+    
     // Start is called before the first frame update
     void Start() {
         obsPrefab = Resources.Load<GameObject>("Prefabs/Obstacle");//障碍物
@@ -50,10 +42,29 @@ public class MapGenerator : MonoBehaviour {
             }
         }
         //随机障碍生成
+        shuffleQueue = new Queue<Coord>(Utils.ShuffleCoords(tileCoordsList.ToArray()));
         for (int i = 0; i < obsCount; i++) {
-            Coord randomCoord = tileCoordsList[UnityEngine.Random.Range(0, tileCoordsList.Count)];
+            Coord randomCoord = GetRandomCoord();
             Vector3 newPos = new Vector3(-mapSize.x / 2 + 0.5f + randomCoord.x, 0.6f, -mapSize.y / 2 + 0.5f + randomCoord.y); //计算位置
             GameObject obs = GameObject.Instantiate(obsPrefab, newPos, Quaternion.Euler(90, 0, 0), randomCoord.trs);
         }
+    }
+
+    public Coord GetRandomCoord() {
+        Coord random = shuffleQueue.Dequeue();//出队列,此时的队列是打乱顺序的队列
+        shuffleQueue.Enqueue((random));//将出队的元素放置到队尾,保持队列的完整
+        return random;
+    }
+}
+
+[System.Serializable]
+public struct Coord {
+    public int x;
+    public int y;
+    public Transform trs;
+    public Coord(int x, int y, Transform self) {
+        this.x = x;
+        this.y = y;
+        this.trs = self;
     }
 }
