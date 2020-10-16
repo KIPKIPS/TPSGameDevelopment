@@ -66,7 +66,6 @@ public class MapGenerator : MonoBehaviour {
         return random;
     }
 }
-
 [System.Serializable]
 public struct Coord {
     public int x;
