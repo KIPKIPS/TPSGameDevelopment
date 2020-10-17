@@ -27,10 +27,13 @@ public class MapGenerator : MonoBehaviour {
     [Header("Navmesh Agent")]
     public Vector2 mapMaxSize;
 
+    public GameObject navMeshObs;
+
     // Start is called before the first frame update
     void Start() {
         obsPrefab = Resources.Load<GameObject>("Prefabs/Obstacle");//障碍物
         tilePrefab = Resources.Load<GameObject>("Prefabs/Tile");//地图瓦片
+        navMeshObs = Resources.Load<GameObject>("Prefabs/NavMeshObs");
         mapHolder = transform.Find("MapHolder").transform;
         GenerateMap();
     }
@@ -77,15 +80,28 @@ public class MapGenerator : MonoBehaviour {
                 Material mat = mesh.material;
                 float colorPercent = (randomCoord.x / mapSize.x + randomCoord.y / mapSize.y) / 2;
                 mat.color = Color.Lerp(foregroundColor, backgroundColor, colorPercent);//插值运算
-
-                
             }
             else {
                 mapObs[randomCoord.x, randomCoord.y] = false;
                 curObsCount--;
             }
-
         }
+        // TODO: 动态生成'空气墙'NavMeshObstacle + Collider
+        GameObject navMeshObsForward = GameObject.Instantiate(navMeshObs, Vector3.forward * (mapMaxSize.y + mapSize.y) / 4, Quaternion.identity);
+        navMeshObsForward.transform.localScale = new Vector3(mapSize.x, 5, mapMaxSize.y / 2 - mapSize.y / 2);
+        navMeshObsForward.transform.localPosition = navMeshObsForward.transform.localPosition + new Vector3(0,2.5f,0);
+
+        GameObject navMeshObsBack = GameObject.Instantiate(navMeshObs, Vector3.back * (mapMaxSize.y + mapSize.y) / 4, Quaternion.identity);
+        navMeshObsBack.transform.localScale = new Vector3(mapSize.x, 5, mapMaxSize.y / 2 - mapSize.y / 2);
+        navMeshObsBack.transform.localPosition = navMeshObsBack.transform.localPosition + new Vector3(0, 2.5f, 0);
+
+        GameObject navMeshObsLeft = GameObject.Instantiate(navMeshObs, Vector3.left * (mapMaxSize.x + mapSize.x) / 4, Quaternion.identity);
+        navMeshObsLeft.transform.localScale = new Vector3(mapMaxSize.x / 2 - mapSize.x / 2, 5, mapSize.y);
+        navMeshObsLeft.transform.localPosition = navMeshObsLeft.transform.localPosition + new Vector3(0, 2.5f, 0);
+
+        GameObject navMeshObsRight = GameObject.Instantiate(navMeshObs, Vector3.right * (mapMaxSize.x + mapSize.x) / 4, Quaternion.identity);
+        navMeshObsRight.transform.localScale = new Vector3(mapMaxSize.x / 2 - mapSize.x / 2, 5, mapSize.y);
+        navMeshObsRight.transform.localPosition = navMeshObsRight.transform.localPosition + new Vector3(0, 2.5f, 0);
     }
 
     //填充判断算法
