@@ -7,7 +7,7 @@ public class MapGenerator : MonoBehaviour {
     public GameObject tilePrefab;
     public Vector2 mapSize = new Vector2(8, 8);
     public Transform mapHolder;
-    [Range(0, 1)] public float outlinePercent = 0.1f; //地图板块间隔
+    [Range(0, 1)] public float outlinePercent = 0f; //地图板块间隔
     public List<Coord> tileCoordsList = new List<Coord>();
 
     public Queue<Coord> shuffleQueue;//队列
@@ -29,6 +29,8 @@ public class MapGenerator : MonoBehaviour {
 
     public GameObject navMeshObs;
 
+    public GameObject player;
+
     // Start is called before the first frame update
     void Start() {
         obsPrefab = Resources.Load<GameObject>("Prefabs/Obstacle");//障碍物
@@ -36,11 +38,16 @@ public class MapGenerator : MonoBehaviour {
         navMeshObs = Resources.Load<GameObject>("Prefabs/NavMeshObs");
         mapHolder = transform.Find("MapHolder").transform;
         GenerateMap();
+        Init();
     }
 
+    public void Init() {
+        player = Resources.Load<GameObject>("Prefabs/Player");
+        GameObject.Instantiate(player, new Vector3(-mapSize.x / 2 + 0.5f + mapCenter.x, 0, -mapSize.y / 2 + 0.5f + mapCenter.y), Quaternion.identity);
+    }
     // Update is called once per frame
     void Update() {
-
+        
     }
 
     //生成地图算法
