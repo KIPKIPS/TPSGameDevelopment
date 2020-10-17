@@ -24,6 +24,9 @@ public class MapGenerator : MonoBehaviour {
     private Coord mapCenter;//地图的中心点,每个随机地图的中心点都是不能有障碍物的
     public bool[,] mapObs;//记录地图坐标是否有障碍物的二维数组
 
+    [Header("Navmesh Agent")]
+    public Vector2 mapMaxSize;
+
     // Start is called before the first frame update
     void Start() {
         obsPrefab = Resources.Load<GameObject>("Prefabs/Obstacle");//障碍物
