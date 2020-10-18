@@ -7,26 +7,30 @@ using UnityEngine.AI;
 public class Enemy : MonoBehaviour {
     public NavMeshAgent pathFinder;
     private Transform target;
+    private int flag;
     void Start() {
         pathFinder = GetComponent<NavMeshAgent>();
-        StartCoroutine(UpdatePath());//开启寻路协程,防止每一帧都执行寻路
+        flag = 0;
     }
 
     // Update is called once per frame
     void Update() {
-        
-        
+        if (target == null) {
+            target = GameObject.FindGameObjectWithTag("Player").transform;
+        }
+        else {
+            if (flag == 0) {
+                flag = 1;
+                StartCoroutine(UpdatePath());//开启寻路协程,防止每一帧都执行寻路
+            }        }
     }
 
     //节省性能,在协程中执行寻路,不必在每一帧都去计算路径
     IEnumerator UpdatePath() {
         float refreshRate = 0.25f;
-        if (target == null) {
-            target = GameObject.FindGameObjectWithTag("Player").transform;
-        }
-        else {
-            while (target!=null) {
-                Vector3 targetPosition = new Vector3(target.position.x,0,target.position.z);
+        if (target!=null) {
+            while (target != null) {
+                Vector3 targetPosition = new Vector3(target.position.x, 0, target.position.z);
                 pathFinder.SetDestination(targetPosition);//寻路,会重算寻路路径
                 yield return new WaitForSeconds(refreshRate);
             }
