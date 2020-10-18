@@ -58,7 +58,7 @@
     <Compile Include="Assets\Scripts\Player.cs" />
     <Compile Include="Assets\Scripts\Gun.cs" />
     <Compile Include="Assets\Scripts\GunController.cs" />
-    <Compile Include="Assets\Scripts\Fire.cs" />
+    <Compile Include="Assets\Scripts\Bullet.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\BOXOPHOBIC\Skybox Cubemap Extended\Core\Shaders\Skybox Cubemap Extended.shader" />

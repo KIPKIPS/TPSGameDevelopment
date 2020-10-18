@@ -21,7 +21,14 @@ public class GunController : MonoBehaviour {
         if (equippedGun != null) {
             Destroy(equippedGun.gameObject);
         }
+        //实例化武器预制体
         equippedGun = Instantiate(gunToEquip, weaponHolder.position,weaponHolder.rotation) as Gun;
         equippedGun.transform.parent = weaponHolder;
+    }
+
+    public void Shoot() {
+        if (equippedGun != null) {
+            equippedGun.Shoot();
+        }
     }
 }
