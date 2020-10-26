@@ -141,6 +141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2c7d858f0be3fc40bf4bca42d3bdd01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startHP: 5
   moveSpeed: 5
   viewCamera: {fileID: 0}
 --- !u!114 &-8067936966843453090

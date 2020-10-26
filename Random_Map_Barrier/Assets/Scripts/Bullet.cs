@@ -5,6 +5,7 @@ using UnityEngine;
 public class Bullet : MonoBehaviour {
     public float speed = 10f;
     public LayerMask collisionMask;//检测碰撞的layer
+    private float damage = 1;
     void Start() {
 
     }
@@ -29,6 +30,10 @@ public class Bullet : MonoBehaviour {
 
     void OnHitObject(RaycastHit hit) {
         //print(hit.transform.gameObject.name);
+        IDamageable damageableObject = hit.collider.GetComponent<IDamageable>();
+        if (damageableObject != null) {
+            damageableObject.TakeHit(damage,hit);
+        }
         GameObject.Destroy(this.gameObject);
     }
 }
