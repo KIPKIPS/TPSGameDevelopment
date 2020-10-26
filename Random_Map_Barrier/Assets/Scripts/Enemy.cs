@@ -8,7 +8,7 @@ public class Enemy : LivingEntity {
     public NavMeshAgent pathFinder;
     private Transform target;
     private int flag;
-    public override void Start() {
+    protected override void Start() {
         base.Start();
         pathFinder = GetComponent<NavMeshAgent>();//寻路组件
         flag = 0;
@@ -30,12 +30,12 @@ public class Enemy : LivingEntity {
     //节省性能,在协程中执行寻路,不必在每一帧都去计算路径
     IEnumerator UpdatePath() {
         float refreshRate = 0.25f;
-        if (target != null) {
-            while (target != null) {
-                Vector3 targetPosition = new Vector3(target.position.x, 0, target.position.z);
+        while (target != null) {
+            Vector3 targetPosition = new Vector3(target.position.x, 0, target.position.z);
+            if (!dead) {
                 pathFinder.SetDestination(targetPosition);//寻路,会重算寻路路径
-                yield return new WaitForSeconds(refreshRate);
             }
+            yield return new WaitForSeconds(refreshRate);
         }
     }
 }

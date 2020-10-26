@@ -62,6 +62,7 @@
     <Compile Include="Assets\Scripts\GunController.cs" />
     <Compile Include="Assets\Scripts\IDamageable.cs" />
     <Compile Include="Assets\Scripts\LivingEntity.cs" />
+    <Compile Include="Assets\Scripts\Spawner.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\BOXOPHOBIC\Skybox Cubemap Extended\Core\Shaders\Skybox Cubemap Extended.shader" />

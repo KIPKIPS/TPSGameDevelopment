@@ -10,7 +10,7 @@ public class Player : LivingEntity {
     private PlayerController playerController;
     private GunController gunController;
     // Start is called before the first frame update
-    public override void Start() {
+    protected override void Start() {
         base.Start();
         playerController = GetComponent<PlayerController>();
         gunController = GetComponent<GunController>();
