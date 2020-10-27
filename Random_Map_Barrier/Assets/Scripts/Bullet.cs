@@ -19,20 +19,22 @@ public class Bullet : MonoBehaviour {
         transform.Translate(Vector3.forward * moveDistance);
     }
 
+    //检测碰撞
     void CheckCollisions(float moveDistance) {
-        Ray ray = new Ray(transform.position,transform.forward);
+        Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit;
         //与trigger的碰撞也要触发
-        if (Physics.Raycast(ray,out hit, moveDistance, collisionMask,QueryTriggerInteraction.Collide)) {
+        if (Physics.Raycast(ray, out hit, moveDistance, collisionMask, QueryTriggerInteraction.Collide)) {
             OnHitObject(hit);
         }
     }
 
+    //碰撞触发
     void OnHitObject(RaycastHit hit) {
         //print(hit.transform.gameObject.name);
         IDamageable damageableObject = hit.collider.GetComponent<IDamageable>();
         if (damageableObject != null) {
-            damageableObject.TakeHit(damage,hit);
+            damageableObject.TakeHit(damage, hit);
         }
         GameObject.Destroy(this.gameObject);
     }

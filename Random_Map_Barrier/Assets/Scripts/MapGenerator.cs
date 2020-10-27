@@ -47,7 +47,7 @@ public class MapGenerator : MonoBehaviour {
     }
     // Update is called once per frame
     void Update() {
-        
+
     }
 
     //生成地图算法
@@ -96,7 +96,7 @@ public class MapGenerator : MonoBehaviour {
         // TODO: 动态生成'空气墙'NavMeshObstacle + Collider
         GameObject navMeshObsForward = GameObject.Instantiate(navMeshObs, Vector3.forward * (mapMaxSize.y + mapSize.y) / 4, Quaternion.identity);
         navMeshObsForward.transform.localScale = new Vector3(mapSize.x, 5, mapMaxSize.y / 2 - mapSize.y / 2);
-        navMeshObsForward.transform.localPosition = navMeshObsForward.transform.localPosition + new Vector3(0,2.5f,0);
+        navMeshObsForward.transform.localPosition = navMeshObsForward.transform.localPosition + new Vector3(0, 2.5f, 0);
 
         GameObject navMeshObsBack = GameObject.Instantiate(navMeshObs, Vector3.back * (mapMaxSize.y + mapSize.y) / 4, Quaternion.identity);
         navMeshObsBack.transform.localScale = new Vector3(mapSize.x, 5, mapMaxSize.y / 2 - mapSize.y / 2);
@@ -113,7 +113,7 @@ public class MapGenerator : MonoBehaviour {
 
     //填充判断算法
     private bool MapIsFullyAccessible(bool[,] mapObsInfo, int curObsCount) {
-        bool[,] mapFlag = new bool[mapObsInfo.GetLength(0),mapObsInfo.GetLength(1)];//初始化标记信息
+        bool[,] mapFlag = new bool[mapObsInfo.GetLength(0), mapObsInfo.GetLength(1)];//初始化标记信息
         Queue<Coord> queue = new Queue<Coord>(); //所有通过筛选的地图会存放到这个队列中
         queue.Enqueue(mapCenter);
         mapFlag[(int)mapCenter.x, (int)mapCenter.y] = true;//中心点一定不能有障碍物
@@ -130,10 +130,10 @@ public class MapGenerator : MonoBehaviour {
                     if (i == 0 || j == 0) {
                         if (neighborX >= 0 && neighborX < mapObsInfo.GetLength(0) && neighborY >= 0 && neighborY < mapObsInfo.GetLength(1)) {
                             //当前坐标没有被检测过,并且不存在障碍物
-                            if (!mapFlag[neighborX,neighborY]&&!mapObsInfo[neighborX,neighborY]) {
+                            if (!mapFlag[neighborX, neighborY] && !mapObsInfo[neighborX, neighborY]) {
                                 mapFlag[neighborX, neighborY] = true;
                                 accessibleCount++;
-                                queue.Enqueue(new Coord(neighborX,neighborY,null));
+                                queue.Enqueue(new Coord(neighborX, neighborY, null));
                             }
                         }
                     }
@@ -141,7 +141,7 @@ public class MapGenerator : MonoBehaviour {
             }
         }
 
-        int obsTargetCount = (int) (mapSize.x * mapSize.y - curObsCount);
+        int obsTargetCount = (int)(mapSize.x * mapSize.y - curObsCount);
         return obsTargetCount == accessibleCount;
     }
 

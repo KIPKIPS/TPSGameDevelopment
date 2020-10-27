@@ -8,7 +8,7 @@ public class Gun : MonoBehaviour {
     public float msBetweenShots = 100;//射击间隔
     public float fireSpeed = 35;//射击速度
 
-    private float nextShotTime; 
+    private float nextShotTime;
     void Start() {
         bullet = Resources.Load<GameObject>("Prefabs/Bullet").GetComponent<Bullet>();
     }
@@ -20,10 +20,10 @@ public class Gun : MonoBehaviour {
 
     public void Shoot() {
         if (Time.time > nextShotTime) {
-            nextShotTime = Time.time + msBetweenShots/1000;
+            nextShotTime = Time.time + msBetweenShots / 1000;
             Bullet newBullet = Instantiate(bullet, fireTrs.position, fireTrs.rotation) as Bullet;
             newBullet.SetSpeed(fireSpeed);
         }
-        
+
     }
 }

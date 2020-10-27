@@ -15,7 +15,7 @@ public class Spawner : MonoBehaviour {
         enemy = Resources.Load<GameObject>("Prefabs/Enemy").GetComponent<Enemy>();
         NextWave();
     }
-    
+
     void Update() {
         if (remainEnemiesToSpawn > 0 && Time.time > nextSpawnTime) {
             remainEnemiesToSpawn--;
@@ -26,7 +26,7 @@ public class Spawner : MonoBehaviour {
     }
 
     void OnEnemyDeath() {
-        aliveEnemies --;
+        aliveEnemies--;
         //print("enemy death");
         //存活敌人数为0,开启下一波
         if (aliveEnemies == 0) {
@@ -37,8 +37,8 @@ public class Spawner : MonoBehaviour {
     //开始下一波敌人
     void NextWave() {
         curWaveNum++;
-        print("wave num:"+curWaveNum);
-        if (curWaveNum - 1 <waves.Length) {
+        print("wave num:" + curWaveNum);
+        if (curWaveNum - 1 < waves.Length) {
             curWave = waves[curWaveNum - 1];
 
             remainEnemiesToSpawn = curWave.enemyCount;

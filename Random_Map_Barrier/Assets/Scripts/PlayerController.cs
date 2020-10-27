@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     void FixedUpdate() {
-        rigid.MovePosition(rigid.position + moveVelocity*Time.fixedDeltaTime);
+        rigid.MovePosition(rigid.position + moveVelocity * Time.fixedDeltaTime);
     }
 
     public void LookAt(Vector3 point) {
