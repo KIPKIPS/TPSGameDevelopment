@@ -11,13 +11,17 @@ public class LivingEntity : MonoBehaviour, IDamageable {
     protected virtual void Start() {
         HP = startHP;
     }
-
     //生命体受击
-    public void TakeHit(float damage, RaycastHit hit) {
+    public void TakeDamage(float damage) {
         HP -= damage;
         if (HP <= 0 && !dead) {
             Die();
         }
+    }
+
+    //扩展的生命体受击
+    public void TakeHit(float damage, RaycastHit hit) {
+        TakeDamage(damage);
     }
 
     public void Die() {
