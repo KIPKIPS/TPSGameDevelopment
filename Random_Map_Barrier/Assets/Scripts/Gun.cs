@@ -24,6 +24,5 @@ public class Gun : MonoBehaviour {
             Bullet newBullet = Instantiate(bullet, fireTrs.position, fireTrs.rotation) as Bullet;
             newBullet.SetSpeed(fireSpeed);
         }
-
     }
 }
