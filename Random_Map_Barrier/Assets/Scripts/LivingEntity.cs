@@ -13,6 +13,7 @@ public class LivingEntity : MonoBehaviour, IDamageable {
     }
     //生命体受击
     public void TakeDamage(float damage) {
+        //print("hit1");
         HP -= damage;
         if (HP <= 0 && !dead) {
             Die();
@@ -21,10 +22,12 @@ public class LivingEntity : MonoBehaviour, IDamageable {
 
     //扩展的生命体受击
     public void TakeHit(float damage, RaycastHit hit) {
+        //print("hit2");
         TakeDamage(damage);
     }
 
     public void Die() {
+        //print("die");
         dead = true;
         if (OnDeath != null) {
             OnDeath();

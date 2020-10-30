@@ -8,14 +8,13 @@ public class Bullet : MonoBehaviour {
     private float damage = 1;
     private float existTime = 3.0f;//在场景保存的时间
 
-    private float skinWidth = 0.1f;
+    private float skinWidth = 0;
     void Start() {
-        collisionMask = LayerMask.NameToLayer("Enemy");
         Destroy(gameObject,existTime);
     }
     public void SetSpeed(float newSpeed) {
         speed = newSpeed;
-        Collider[] nearColliders = Physics.OverlapSphere(transform.position, 0.1f, collisionMask);//检测附近有无敌人
+        Collider[] nearColliders = Physics.OverlapSphere(transform.position, 0.2f, collisionMask);//检测附近有无敌人
         if (nearColliders.Length > 0) {
             OnHitObject(nearColliders[0]);//damage 第一个(最近的敌人)
         }
@@ -42,6 +41,7 @@ public class Bullet : MonoBehaviour {
         //print(hit.transform.gameObject.name);
         IDamageable damageObject = hit.collider.GetComponent<IDamageable>();
         if (damageObject != null) {
+            //print("hit");
             damageObject.TakeHit(damage, hit);
         }
         GameObject.Destroy(this.gameObject);
