@@ -33,7 +33,6 @@ public class Enemy : LivingEntity {
         pathFinder = GetComponent<NavMeshAgent>();//寻路组件
         mat = GetComponent<Renderer>().material;
         oriColor = mat.color;//初始颜色
-
         //场景中有存活的玩家
         if (GameObject.FindGameObjectWithTag("Player") != null) {
             hasTarget = true;
@@ -47,7 +46,7 @@ public class Enemy : LivingEntity {
 
             StartCoroutine(UpdatePath());//开启寻路协程,防止每一帧都执行寻路
         }
-       
+
     }
 
     //处理目标死亡
@@ -70,7 +69,7 @@ public class Enemy : LivingEntity {
                 }
             }
         }
-        
+
     }
     //攻击协程
     IEnumerator Attack() {
@@ -85,7 +84,7 @@ public class Enemy : LivingEntity {
         bool doAttack = false;//有效攻击false
         mat.color = Color.black;
         while (percent <= 1) {
-            if (percent >=0.5f&& !doAttack) {
+            if (percent >= 0.5f && !doAttack) {
                 doAttack = true;
                 targetEntity.TakeDamage(damage);
             }

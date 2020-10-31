@@ -26,9 +26,7 @@ public class MapGenerator : MonoBehaviour {
 
     [Header("Navmesh Agent")]
     public Vector2 mapMaxSize;
-
     public GameObject navMeshObs;
-
     public GameObject player;
 
     // Start is called before the first frame update
@@ -49,6 +47,7 @@ public class MapGenerator : MonoBehaviour {
     void Update() {
 
     }
+
 
     //生成地图算法
     void GenerateMap() {
@@ -87,8 +86,7 @@ public class MapGenerator : MonoBehaviour {
                 Material mat = mesh.material;
                 float colorPercent = (randomCoord.x / mapSize.x + randomCoord.y / mapSize.y) / 2;
                 mat.color = Color.Lerp(foregroundColor, backgroundColor, colorPercent);//插值运算
-            }
-            else {
+            } else {
                 mapObs[randomCoord.x, randomCoord.y] = false;
                 curObsCount--;
             }
