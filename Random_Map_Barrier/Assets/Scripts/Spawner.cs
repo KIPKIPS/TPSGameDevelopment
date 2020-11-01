@@ -13,10 +13,10 @@ public class Spawner : MonoBehaviour {
     MapGenerator map;
     LivingEntity player;
     Transform playerTrs;//玩家位置
-    float timeBetweenCheck = 2;//检测玩家是否静止的时间间隔
-    float campMoveDistance;//检测静止需要移动的距离
-    float nextCheckTime;//检测时间
-    Vector3 campPosOld;
+    float timeBetweenCheck = 2;//检测玩家是否类挂机的时间间隔
+    float campMoveDistance = 1.5f;//避免类挂机检测至少需要移动的距离
+    float nextCheckTime;//下一次检测时间
+    Vector3 lastCampPos;//上一次玩家长时间停留的位置
     bool isCamp;
 
     private int aliveEnemies;//剩余存活的敌人
@@ -26,7 +26,7 @@ public class Spawner : MonoBehaviour {
         playerTrs = player.transform;
 
         nextCheckTime = timeBetweenCheck + Time.time;
-        campPosOld = playerTrs.position;
+        lastCampPos = playerTrs.position;
 
         map = FindObjectOfType<MapGenerator>();//获取地图
         enemy = Resources.Load<GameObject>("Prefabs/Enemy").GetComponent<Enemy>();//获取敌人预制体
@@ -38,8 +38,8 @@ public class Spawner : MonoBehaviour {
         if (Time.time > nextCheckTime) {
             nextCheckTime = Time.time + timeBetweenCheck;
             //若玩家距离上次静止的位置小于检测距离,即玩家移动的距离在一定时间段过于小
-            isCamp = Vector3.Distance(playerTrs.position, campPosOld) < campMoveDistance;
-            campPosOld = playerTrs.position;
+            isCamp = Vector3.Distance(playerTrs.position, lastCampPos) < campMoveDistance;
+            lastCampPos = playerTrs.position;
         }
         //剩余需要生成的敌人数大于0,当前时间满足生成时间
         if (remainEnemiesToSpawn > 0 && Time.time > nextSpawnTime) {
@@ -59,6 +59,10 @@ public class Spawner : MonoBehaviour {
 
         //随机一个贴片位置
         Transform randomTile = map.GetRandomOpenTile();
+        //玩家类挂机行为存在,就在玩家附近生成敌人,迫使玩家移动起来
+        if (isCamp) {
+            randomTile = map.GetTileFromPosition(playerTrs.position);
+        }
         Material tileMat = randomTile.GetComponent<Renderer>().material;
         Color oriColor = tileMat.color;
         Color flashColor = Color.red;

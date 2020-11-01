@@ -18113,6 +18113,8 @@ MonoBehaviour:
     timeBetweenSpawns: 1
   - enemyCount: 10
     timeBetweenSpawns: 0.75
+  - enemyCount: 100
+    timeBetweenSpawns: 3
   enemy: {fileID: 0}
   remainEnemiesToSpawn: 0
 --- !u!4 &1240393617
