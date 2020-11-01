@@ -21,7 +21,11 @@ MonoBehaviour:
   m_ShowMode: 4
   m_Title: Project
   m_RootView: {fileID: 2}
+<<<<<<< Updated upstream
   m_MinSize: {x: 875, y: 431}
+=======
+  m_MinSize: {x: 875, y: 442}
+>>>>>>> Stashed changes
   m_MaxSize: {x: 10000, y: 10000}
   m_Maximized: 1
 --- !u!114 &2
@@ -46,7 +50,11 @@ MonoBehaviour:
     y: 0
     width: 1920
     height: 997
+<<<<<<< Updated upstream
   m_MinSize: {x: 875, y: 431}
+=======
+  m_MinSize: {x: 875, y: 442}
+>>>>>>> Stashed changes
   m_MaxSize: {x: 10000, y: 10000}
   m_UseTopView: 1
   m_TopViewHeight: 30
@@ -121,10 +129,17 @@ MonoBehaviour:
     y: 30
     width: 1920
     height: 947
+<<<<<<< Updated upstream
   m_MinSize: {x: 910, y: 371}
   m_MaxSize: {x: 22005, y: 14021}
   vertical: 0
   controlID: 16
+=======
+  m_MinSize: {x: 911, y: 392}
+  m_MaxSize: {x: 22006, y: 14042}
+  vertical: 0
+  controlID: 36
+>>>>>>> Stashed changes
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -175,7 +190,11 @@ MonoBehaviour:
   m_MinSize: {x: 232, y: 371}
   m_MaxSize: {x: 10002, y: 14021}
   vertical: 1
+<<<<<<< Updated upstream
   controlID: 21
+=======
+  controlID: 112
+>>>>>>> Stashed changes
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -277,8 +296,8 @@ MonoBehaviour:
     y: 0
     width: 361
     height: 947
-  m_MinSize: {x: 275, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 276, y: 71}
+  m_MaxSize: {x: 4001, y: 4021}
   m_ActualView: {fileID: 19}
   m_Panes:
   - {fileID: 19}
@@ -335,7 +354,11 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 3e370000
     m_LastClickedID: 14142
+<<<<<<< Updated upstream
     m_ExpandedIDs: 00000000124300001443000016430000184300001a4300001c430000
+=======
+    m_ExpandedIDs: 000000001c4300001e43000020430000224300002443000026430000
+>>>>>>> Stashed changes
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -360,10 +383,17 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_AssetTreeState:
+<<<<<<< Updated upstream
     scrollPos: {x: 0, y: 162}
     m_SelectedIDs: 
     m_LastClickedID: 0
     m_ExpandedIDs: ffffffff00000000124300001443000016430000184300001a4300001c430000
+=======
+    scrollPos: {x: 0, y: 84}
+    m_SelectedIDs: 
+    m_LastClickedID: 0
+    m_ExpandedIDs: ffffffff000000001c4300001e43000020430000224300002443000026430000
+>>>>>>> Stashed changes
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: GunController
@@ -561,10 +591,17 @@ MonoBehaviour:
   m_ViewDataDictionary: {fileID: 0}
   m_SceneHierarchy:
     m_TreeViewState:
+<<<<<<< Updated upstream
       scrollPos: {x: 0, y: 5927}
       m_SelectedIDs: 5e350000
       m_LastClickedID: 0
       m_ExpandedIDs: 7412feff56fbffffcc390000
+=======
+      scrollPos: {x: 0, y: 0}
+      m_SelectedIDs: d2340000
+      m_LastClickedID: 0
+      m_ExpandedIDs: 56fbffff
+>>>>>>> Stashed changes
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -675,7 +712,11 @@ MonoBehaviour:
   m_Rotation:
     m_Target: {x: -0.16499262, y: 0.042301122, z: -0.007081383, w: -0.9853932}
     speed: 2
+<<<<<<< Updated upstream
     m_Value: {x: -0.16350928, y: 0.042310387, z: -0.007017698, w: -0.98560905}
+=======
+    m_Value: {x: 0.32561353, y: 0.5455111, z: -0.24226214, w: 0.7333143}
+>>>>>>> Stashed changes
   m_Size:
     m_Target: 13.97426
     speed: 2
