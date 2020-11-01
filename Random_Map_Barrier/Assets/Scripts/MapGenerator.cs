@@ -22,7 +22,6 @@ public class MapGenerator : MonoBehaviour {
 
     Map currentMap;
 
-
     void Start() {
         GenerateMap();
     }
@@ -179,10 +178,27 @@ public class MapGenerator : MonoBehaviour {
         return randomCoord;
     }
 
+    /// <summary>
+    /// 获取随机的地图贴片
+    /// </summary>
+    /// <returns></returns>
     public Transform GetRandomOpenTile() {
         Coord randomCoord = shuffledOpenTileCoords.Dequeue();//出队
         shuffledOpenTileCoords.Enqueue(randomCoord);//入队
         return tileMap[randomCoord.x, randomCoord.y];
+    }
+
+    /// <summary>
+    /// 获取位置处的地图贴片
+    /// </summary>
+    /// <param name="pos">位置信息</param>
+    /// <returns>地图贴片</returns>
+    public Transform GetTileFromPosition(Vector3 pos) {
+        int x = Mathf.RoundToInt(pos.x / tileSize + (currentMap.mapSize.x - 1) / 2f);
+        x = Mathf.Clamp(x, 0, tileMap.GetLength(0));
+        int y = Mathf.RoundToInt(pos.y / tileSize + (currentMap.mapSize.y - 1) / 2f);
+        y = Mathf.Clamp(y, 0, tileMap.GetLength(1));
+        return tileMap[x, y];
     }
 
     [System.Serializable]
@@ -201,6 +217,7 @@ public class MapGenerator : MonoBehaviour {
             return !(c1 == c2);
         }
     }
+
     [System.Serializable]
     public class Map {
         public Coord mapSize;//地图尺寸

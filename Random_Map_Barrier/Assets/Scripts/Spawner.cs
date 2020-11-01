@@ -11,20 +11,41 @@ public class Spawner : MonoBehaviour {
     public int remainEnemiesToSpawn;//剩余需要创建的敌人
     private float nextSpawnTime;
     MapGenerator map;
+    LivingEntity player;
+    Transform playerTrs;//玩家位置
+    float timeBetweenCheck = 2;//检测玩家是否静止的时间间隔
+    float campMoveDistance;//检测静止需要移动的距离
+    float nextCheckTime;//检测时间
+    Vector3 campPosOld;
+    bool isCamp;
 
     private int aliveEnemies;//剩余存活的敌人
     //public event System.Action<int> OnNewWave;
     void Start() {
-        map = FindObjectOfType<MapGenerator>();
-        enemy = Resources.Load<GameObject>("Prefabs/Enemy").GetComponent<Enemy>();
+        player = FindObjectOfType<Player>();//获取玩家
+        playerTrs = player.transform;
+
+        nextCheckTime = timeBetweenCheck + Time.time;
+        campPosOld = playerTrs.position;
+
+        map = FindObjectOfType<MapGenerator>();//获取地图
+        enemy = Resources.Load<GameObject>("Prefabs/Enemy").GetComponent<Enemy>();//获取敌人预制体
         NextWave();
     }
 
     void Update() {
+        //到达玩家静止检测时间点
+        if (Time.time > nextCheckTime) {
+            nextCheckTime = Time.time + timeBetweenCheck;
+            //若玩家距离上次静止的位置小于检测距离,即玩家移动的距离在一定时间段过于小
+            isCamp = Vector3.Distance(playerTrs.position, campPosOld) < campMoveDistance;
+            campPosOld = playerTrs.position;
+        }
+        //剩余需要生成的敌人数大于0,当前时间满足生成时间
         if (remainEnemiesToSpawn > 0 && Time.time > nextSpawnTime) {
             remainEnemiesToSpawn--;
-            nextSpawnTime = Time.time + curWave.timeBetweenSpawns;
-            StartCoroutine(SpawnerEnemy());
+            nextSpawnTime = Time.time + curWave.timeBetweenSpawns;//为下一次生成时间赋值
+            StartCoroutine(SpawnerEnemy());//生成敌人
         }
     }
 
