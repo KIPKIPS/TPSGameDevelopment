@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿//敌人AI制造机
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ public class Spawner : MonoBehaviour {
     private float nextSpawnTime;
 
     private int aliveEnemies;//剩余存活的敌人
+    //public event System.Action<int> OnNewWave;
     void Start() {
         enemy = Resources.Load<GameObject>("Prefabs/Enemy").GetComponent<Enemy>();
         NextWave();
@@ -24,7 +26,9 @@ public class Spawner : MonoBehaviour {
             spawnEnemy.OnDeath += OnEnemyDeath;//订阅事件
         }
     }
-
+    /// <summary>
+    /// 处理敌人死亡的后续事务,若当前波敌人全部死亡,开启下一波
+    /// </summary>
     void OnEnemyDeath() {
         aliveEnemies--;
         //print("enemy death");
@@ -34,10 +38,12 @@ public class Spawner : MonoBehaviour {
         }
     }
 
-    //开始下一波敌人
+    /// <summary>
+    /// 开始制造下一波敌人
+    /// </summary>
     void NextWave() {
         curWaveNum++;
-        print("wave num:" + curWaveNum);
+        //print("wave num:" + curWaveNum);
         if (curWaveNum - 1 < waves.Length) {
             curWave = waves[curWaveNum - 1];
 
@@ -47,7 +53,7 @@ public class Spawner : MonoBehaviour {
     }
 
     [System.Serializable]
-    //波数类
+    //波数对象
     public class Wave {
         public int enemyCount;//一波包含敌人数
         public float timeBetweenSpawns;//两波生成间隔时间

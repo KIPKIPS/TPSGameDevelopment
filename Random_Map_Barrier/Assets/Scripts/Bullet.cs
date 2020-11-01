@@ -10,8 +10,12 @@ public class Bullet : MonoBehaviour {
 
     private float skinWidth = 0;
     void Start() {
-        Destroy(gameObject,existTime);
+        Destroy(gameObject, existTime);
     }
+    /// <summary>
+    /// 设置子弹速度
+    /// </summary>
+    /// <param name="newSpeed">速度大小</param>
     public void SetSpeed(float newSpeed) {
         speed = newSpeed;
         Collider[] nearColliders = Physics.OverlapSphere(transform.position, 0.2f, collisionMask);//检测附近有无敌人
@@ -26,17 +30,23 @@ public class Bullet : MonoBehaviour {
         transform.Translate(Vector3.forward * moveDistance);
     }
 
-    //检测碰撞
+    /// <summary>
+    /// 检测碰撞
+    /// </summary>
+    /// <param name="moveDistance">检测距离</param>
     void CheckCollisions(float moveDistance) {
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit;
-        //与trigger的碰撞也要触发,加上
+        //与trigger的碰撞也要触发,加上QueryTriggerInteraction.Collide
         if (Physics.Raycast(ray, out hit, moveDistance + skinWidth, collisionMask, QueryTriggerInteraction.Collide)) {
             OnHitObject(hit);
         }
     }
 
-    //碰撞触发
+    /// <summary>
+    /// 碰撞触发
+    /// </summary>
+    /// <param name="hit">击中的目标</param>
     void OnHitObject(RaycastHit hit) {
         //print(hit.transform.gameObject.name);
         IDamageable damageObject = hit.collider.GetComponent<IDamageable>();
@@ -47,7 +57,10 @@ public class Bullet : MonoBehaviour {
         GameObject.Destroy(this.gameObject);
     }
 
-    //重写碰撞触发方法
+    /// <summary>
+    /// 重写碰撞触发方法
+    /// </summary>
+    /// <param name="collider"></param>
     void OnHitObject(Collider collider) {
         IDamageable damageObject = collider.GetComponent<IDamageable>();
         if (damageObject != null) {

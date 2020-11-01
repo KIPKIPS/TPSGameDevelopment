@@ -45,11 +45,14 @@ public class Enemy : LivingEntity {
             selfRadius = this.GetComponent<CapsuleCollider>().radius;
 
             StartCoroutine(UpdatePath());//开启寻路协程,防止每一帧都执行寻路
+
         }
 
     }
 
-    //处理目标死亡
+    /// <summary>
+    /// 处理目标死亡
+    /// </summary>
     void OnTargetDeath() {
         hasTarget = false;
         curState = State.Idle;
@@ -71,7 +74,10 @@ public class Enemy : LivingEntity {
         }
 
     }
-    //攻击协程
+    /// <summary>
+    /// 攻击协程
+    /// </summary>
+    /// <returns></returns>
     IEnumerator Attack() {
         curState = State.Attack;
         //进攻期间关闭寻路
@@ -101,7 +107,10 @@ public class Enemy : LivingEntity {
         mat.color = oriColor;
     }
 
-    //节省性能,在协程中执行寻路,不必在每一帧都去计算路径
+    /// <summary>
+    /// 寻路协程[节省性能,在协程中执行寻路,不在每一帧都去计算路径]
+    /// </summary>
+    /// <returns></returns>
     IEnumerator UpdatePath() {
         float refreshRate = 0.25f;
         while (hasTarget) {

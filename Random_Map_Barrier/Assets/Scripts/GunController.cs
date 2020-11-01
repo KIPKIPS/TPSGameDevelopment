@@ -15,7 +15,10 @@ public class GunController : MonoBehaviour {
             EquipGun(defaultGun);
         }
     }
-    //装备武器
+    /// <summary>
+    /// 装备武器
+    /// </summary>
+    /// <param name="gunToEquip">需要装备的武器</param>
     public void EquipGun(Gun gunToEquip) {
         //当前角色身上装备有武器,先把旧的武器销毁掉
         if (equippedGun != null) {

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// 生命体基类
+/// <summary>
+/// 生命体基类,持有生命特征的对象
+/// </summary>
 public class LivingEntity : MonoBehaviour, IDamageable {
     protected float HP;
     protected bool dead;//是否死亡
@@ -11,7 +13,10 @@ public class LivingEntity : MonoBehaviour, IDamageable {
     protected virtual void Start() {
         HP = startHP;
     }
-    //生命体受击
+    /// <summary>
+    /// 生命体受击
+    /// </summary>
+    /// <param name="damage">伤害数值</param>
     public void TakeDamage(float damage) {
         //print("hit1");
         HP -= damage;
@@ -20,12 +25,19 @@ public class LivingEntity : MonoBehaviour, IDamageable {
         }
     }
 
-    //扩展的生命体受击
+    /// <summary>
+    /// 扩展的生命体受击函数
+    /// </summary>
+    /// <param name="damage">伤害值</param>
+    /// <param name="hit">伤害来源</param>
     public void TakeHit(float damage, RaycastHit hit) {
         //print("hit2");
         TakeDamage(damage);
     }
 
+    /// <summary>
+    /// 处理死亡
+    /// </summary>
     public void Die() {
         //print("die");
         dead = true;

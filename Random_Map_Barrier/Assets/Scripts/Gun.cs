@@ -18,6 +18,9 @@ public class Gun : MonoBehaviour {
 
     }
 
+    /// <summary>
+    /// 触发射击
+    /// </summary>
     public void Shoot() {
         if (Time.time > nextShotTime) {
             nextShotTime = Time.time + msBetweenShots / 1000;

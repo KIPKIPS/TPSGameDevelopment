@@ -1,120 +1,123 @@
-﻿using System;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class MapGenerator : MonoBehaviour {
-    public GameObject tilePrefab;
-    public Vector2 mapSize = new Vector2(8, 8);
-    public Transform mapHolder;
-    [Range(0, 1)] public float outlinePercent = 0f; //地图板块间隔
-    public List<Coord> tileCoordsList = new List<Coord>();
-
-    public Queue<Coord> shuffleQueue;//队列
-    //障碍物预制体
-    public GameObject obsPrefab;
-    [Header("Obstacles Count")]
-    [Range(0, 1)] public float obsPercent = 0.5f;//障碍物数量
-
-    [Header("Map Fully Accessible")]
-    //障碍物前景色和背景色
-    public Color foregroundColor, backgroundColor;
-    public float minObsHeight = 1, maxObsHeight;
-
-    private Coord mapCenter;//地图的中心点,每个随机地图的中心点都是不能有障碍物的
-    public bool[,] mapObs;//记录地图坐标是否有障碍物的二维数组
-
-    [Header("Navmesh Agent")]
+    public Map[] maps;
+    public int mapIndex;
+    public Transform tilePrefab;//地图预制体
+    public Transform obsPrefab;
+    public Transform navmeshFloor;
+    public Transform navMeshObs;
     public Vector2 mapMaxSize;
-    public GameObject navMeshObs;
-    public GameObject player;
 
-    // Start is called before the first frame update
+    [Range(0, 1)]
+    public float outlinePercent;//地图间隔
+
+    public float tileSize;
+    List<Coord> allTileCoords;//存储所有地图贴片的坐标信息数组
+    Queue<Coord> shuffledTileCoords;//存储洗牌算法生成的乱序队列
+
+    Map currentMap;
+
+
     void Start() {
-        obsPrefab = Resources.Load<GameObject>("Prefabs/Obstacle");//障碍物
-        tilePrefab = Resources.Load<GameObject>("Prefabs/Tile");//地图瓦片
-        navMeshObs = Resources.Load<GameObject>("Prefabs/NavMeshObs");
-        mapHolder = transform.Find("MapHolder").transform;
         GenerateMap();
-        Init();
     }
 
-    public void Init() {
-        player = Resources.Load<GameObject>("Prefabs/Player");
-        GameObject.Instantiate(player, new Vector3(-mapSize.x / 2 + 0.5f + mapCenter.x, 0, -mapSize.y / 2 + 0.5f + mapCenter.y), Quaternion.identity);
-    }
-    // Update is called once per frame
-    void Update() {
+    /// <summary>
+    /// 地图生成算法
+    /// </summary>
+    public void GenerateMap() {
+        currentMap = maps[mapIndex];
+        System.Random random = new System.Random(currentMap.seed);
+        //GetComponent<BoxCollider>().size = new Vector3(currentMap.mapSize.x * tileSize, .05f, currentMap.mapSize.y * tileSize);
 
-    }
-
-
-    //生成地图算法
-    void GenerateMap() {
-        for (int i = 0; i < mapSize.x; i++) {
-            for (int j = 0; j < mapSize.y; j++) {
-                Vector3 newPos = new Vector3(-mapSize.x / 2 + 0.5f + i, 0, -mapSize.y / 2 + 0.5f + j); //计算位置
-                GameObject tile = GameObject.Instantiate(tilePrefab, newPos, Quaternion.Euler(90, 0, 0), mapHolder);
-                tile.transform.localScale = Vector3.one * (1 - outlinePercent); //间隔效果
-                tileCoordsList.Add(new Coord(i, j, tile.transform));
+        //存储地图坐标数据
+        allTileCoords = new List<Coord>();
+        for (int x = 0; x < currentMap.mapSize.x; x++) {
+            for (int y = 0; y < currentMap.mapSize.y; y++) {
+                allTileCoords.Add(new Coord(x, y));
             }
         }
-        //随机障碍生成
-        shuffleQueue = new Queue<Coord>(Utils.ShuffleCoords(tileCoordsList.ToArray()));
-        mapCenter = new Coord((int)mapSize.x / 2, (int)mapSize.y / 2, null); //地图中心点
-        mapObs = new bool[(int)mapSize.x, (int)mapSize.y];//初始化障碍物信息数组
-        int obsCount = Convert.ToInt32(mapSize.x * mapSize.y * obsPercent);
-        Debug.Log(obsCount);
+        //洗牌
+        shuffledTileCoords = new Queue<Coord>(Utils.ShuffleCoords<Coord>(allTileCoords.ToArray(), currentMap.seed));
 
-        int curObsCount = 0;//当前场景中包含的障碍物个数
+        //先销毁旧的地图,若存在
+        string holderName = "MapHolder";
+        if (transform.Find(holderName)) {
+            GameObject.DestroyImmediate(transform.Find(holderName).gameObject);
+        }
+        Transform mapHolder = new GameObject(holderName).transform;
+        mapHolder.parent = transform;
 
+        //生成给定尺寸大小的地图
+        for (int x = 0; x < currentMap.mapSize.x; x++) {
+            for (int y = 0; y < currentMap.mapSize.y; y++) {
+                Vector3 tilePos = CoordToPosition(x, y);//计算位置
+                Transform newTile = GameObject.Instantiate(tilePrefab, tilePos, Quaternion.Euler(Vector3.right * 90)) as Transform;
+                newTile.localScale = Vector3.one * (1 - outlinePercent) * tileSize;//缩放以达到间隔
+                newTile.parent = mapHolder;
+            }
+        }
+        //TODO:限制生成闭合地图的障碍物
+        bool[,] obsMap = new bool[(int)currentMap.mapSize.x, (int)currentMap.mapSize.y];
+        int curObsCount = 0;
+        //生成障碍物
+        int obsCount = (int)Mathf.Ceil(currentMap.obsPercent * currentMap.mapSize.x * currentMap.mapSize.y);
         for (int i = 0; i < obsCount; i++) {
-
-            Coord randomCoord = GetRandomCoord();
-            mapObs[randomCoord.x, randomCoord.y] = true; //假设当前位置可以存在障碍物
+            Coord randomCoord = GetRandomCoord();//获取随机坐标作为障碍物的生成坐标
+            obsMap[randomCoord.x, randomCoord.y] = true;//默认可以生成障碍物
             curObsCount++;
-            //不是所有随机到的坐标都可以生成障碍物,若需要连接成连通地图
-            if (randomCoord != mapCenter && MapIsFullyAccessible(mapObs, curObsCount)) {
-                GameObject obs = GameObject.Instantiate(obsPrefab, randomCoord.trs);
+            if (randomCoord != currentMap.mapCenter && MapIsFullyAccessible(obsMap, curObsCount)) {
                 //随机高度
-                float randomHeight = UnityEngine.Random.Range(minObsHeight, maxObsHeight);
-                obs.transform.localScale = new Vector3(1, 1, randomHeight);
-                obs.transform.localPosition = new Vector3(0, 0, -0.1f - randomHeight / 2);
+                float obsHeight = Mathf.Lerp(currentMap.minObsHeight, currentMap.maxObsHeight, (float)random.NextDouble());
+                Vector3 obsPos = CoordToPosition(randomCoord.x, randomCoord.y);
+                //实例化,缩放,位置,父节点,旋转角度
+                Transform newObs = Instantiate(obsPrefab, obsPos + Vector3.up * obsHeight / 2, Quaternion.identity) as Transform;
+                newObs.parent = mapHolder;
+                newObs.localScale = new Vector3((1 - outlinePercent) * tileSize, obsHeight, (1 - outlinePercent) * tileSize);
 
-                //随机颜色
-                MeshRenderer mesh = obs.GetComponent<MeshRenderer>();
-                Material mat = mesh.material;
-                float colorPercent = (randomCoord.x / mapSize.x + randomCoord.y / mapSize.y) / 2;
-                mat.color = Color.Lerp(foregroundColor, backgroundColor, colorPercent);//插值运算
+                Renderer obsRenderer = newObs.GetComponent<Renderer>();
+                Material obsMaterial = new Material(obsRenderer.sharedMaterial);
+                float colorPercent = randomCoord.y / (float)currentMap.mapSize.y;
+                obsMaterial.color = Color.Lerp(currentMap.foregroundColor, currentMap.backgroundColor, colorPercent);
+                obsRenderer.sharedMaterial = obsMaterial;
             } else {
-                mapObs[randomCoord.x, randomCoord.y] = false;
                 curObsCount--;
+                obsMap[randomCoord.x, randomCoord.y] = false;
             }
         }
+
         // TODO: 动态生成'空气墙'NavMeshObstacle + Collider
-        GameObject navMeshObsForward = GameObject.Instantiate(navMeshObs, Vector3.forward * (mapMaxSize.y + mapSize.y) / 4, Quaternion.identity);
-        navMeshObsForward.transform.localScale = new Vector3(mapSize.x, 5, mapMaxSize.y / 2 - mapSize.y / 2);
-        navMeshObsForward.transform.localPosition = navMeshObsForward.transform.localPosition + new Vector3(0, 2.5f, 0);
+        Transform maskLeft = Instantiate(navMeshObs, new Vector3(0.5f, 0.5f, 0) + Vector3.left * (currentMap.mapSize.x + mapMaxSize.x) / 4 * tileSize, Quaternion.identity) as Transform;
+        maskLeft.parent = mapHolder;
+        maskLeft.localScale = new Vector3((mapMaxSize.x - currentMap.mapSize.x) / 2, 1, currentMap.mapSize.y) * tileSize;
 
-        GameObject navMeshObsBack = GameObject.Instantiate(navMeshObs, Vector3.back * (mapMaxSize.y + mapSize.y) / 4, Quaternion.identity);
-        navMeshObsBack.transform.localScale = new Vector3(mapSize.x, 5, mapMaxSize.y / 2 - mapSize.y / 2);
-        navMeshObsBack.transform.localPosition = navMeshObsBack.transform.localPosition + new Vector3(0, 2.5f, 0);
+        Transform maskRight = Instantiate(navMeshObs, new Vector3(0.5f, 0.5f, 0) + Vector3.right * (currentMap.mapSize.x + mapMaxSize.x) / 4 * tileSize, Quaternion.identity) as Transform;
+        maskRight.parent = mapHolder;
+        maskRight.localScale = new Vector3((mapMaxSize.x - currentMap.mapSize.x) / 2, 1, currentMap.mapSize.y) * tileSize;
 
-        GameObject navMeshObsLeft = GameObject.Instantiate(navMeshObs, Vector3.left * (mapMaxSize.x + mapSize.x) / 4, Quaternion.identity);
-        navMeshObsLeft.transform.localScale = new Vector3(mapMaxSize.x / 2 - mapSize.x / 2, 5, mapSize.y);
-        navMeshObsLeft.transform.localPosition = navMeshObsLeft.transform.localPosition + new Vector3(0, 2.5f, 0);
+        Transform maskTop = Instantiate(navMeshObs, new Vector3(0.5f, 0.5f, 0) + Vector3.forward * (currentMap.mapSize.y + mapMaxSize.y) / 4 * tileSize, Quaternion.identity) as Transform;
+        maskTop.parent = mapHolder;
+        maskTop.localScale = new Vector3(mapMaxSize.x, 1, (mapMaxSize.y - currentMap.mapSize.y) / 2) * tileSize;
 
-        GameObject navMeshObsRight = GameObject.Instantiate(navMeshObs, Vector3.right * (mapMaxSize.x + mapSize.x) / 4, Quaternion.identity);
-        navMeshObsRight.transform.localScale = new Vector3(mapMaxSize.x / 2 - mapSize.x / 2, 5, mapSize.y);
-        navMeshObsRight.transform.localPosition = navMeshObsRight.transform.localPosition + new Vector3(0, 2.5f, 0);
+        Transform maskBottom = Instantiate(navMeshObs, new Vector3(0.5f, 0.5f, 0) + Vector3.back * (currentMap.mapSize.y + mapMaxSize.y) / 4 * tileSize, Quaternion.identity) as Transform;
+        maskBottom.parent = mapHolder;
+        maskBottom.localScale = new Vector3(mapMaxSize.x, 1, (mapMaxSize.y - currentMap.mapSize.y) / 2) * tileSize;
+
+        navmeshFloor.localScale = new Vector3(mapMaxSize.x, mapMaxSize.y) * tileSize;
     }
 
-    //填充判断算法
+    /// <summary>
+    /// 填充判断算法,检测地图是否可以生成障碍物
+    /// </summary>
+    /// <returns></returns>
     private bool MapIsFullyAccessible(bool[,] mapObsInfo, int curObsCount) {
         bool[,] mapFlag = new bool[mapObsInfo.GetLength(0), mapObsInfo.GetLength(1)];//初始化标记信息
         Queue<Coord> queue = new Queue<Coord>(); //所有通过筛选的地图会存放到这个队列中
-        queue.Enqueue(mapCenter);
-        mapFlag[(int)mapCenter.x, (int)mapCenter.y] = true;//中心点一定不能有障碍物
+        queue.Enqueue(currentMap.mapCenter);
+        mapFlag[(int)currentMap.mapCenter.x, (int)currentMap.mapCenter.y] = true;//中心点一定不能有障碍物
         int accessibleCount = 1;
         while (queue.Count > 0) {
             Coord curTile = queue.Dequeue();
@@ -131,7 +134,7 @@ public class MapGenerator : MonoBehaviour {
                             if (!mapFlag[neighborX, neighborY] && !mapObsInfo[neighborX, neighborY]) {
                                 mapFlag[neighborX, neighborY] = true;
                                 accessibleCount++;
-                                queue.Enqueue(new Coord(neighborX, neighborY, null));
+                                queue.Enqueue(new Coord(neighborX, neighborY));
                             }
                         }
                     }
@@ -139,31 +142,64 @@ public class MapGenerator : MonoBehaviour {
             }
         }
 
-        int obsTargetCount = (int)(mapSize.x * mapSize.y - curObsCount);
-        return obsTargetCount == accessibleCount;
+        int targetAccessibleCount = (int)(currentMap.mapSize.x * currentMap.mapSize.y - curObsCount);
+        return targetAccessibleCount == accessibleCount;
     }
 
+    /// <summary>
+    /// 将坐标数据转化为Position信息
+    /// </summary>
+    /// <returns></returns>
+    public Vector3 CoordToPosition(int x, int y) {
+        return new Vector3(-currentMap.mapSize.x / 2 + 0.5f + x, 0, -currentMap.mapSize.y / 2 + 0.5f + y) * tileSize;
+    }
+
+    /// <summary>
+    /// 获取随机的Coord对象
+    /// </summary>
+    /// <returns></returns>
     public Coord GetRandomCoord() {
-        Coord random = shuffleQueue.Dequeue();//出队列,此时的队列是打乱顺序的队列
-        shuffleQueue.Enqueue(random);//将出队的元素放置到队尾,保持队列的完整
-        return random;
+        //将队列的首元素放入队尾
+        Coord randomCoord = shuffledTileCoords.Dequeue();//出队
+        shuffledTileCoords.Enqueue(randomCoord);//入队
+
+        return randomCoord;
+    }
+
+    [System.Serializable]
+    public struct Coord {
+        public int x;
+        public int y;
+        public Coord(int _x, int _y) {
+            x = _x;
+            y = _y;
+        }
+        //重定义操作符,必须static并且返回bool值,一般重定义操作符都是成对重定义
+        public static bool operator ==(Coord c1, Coord c2) {
+            return c1.x == c2.x && c1.y == c2.y;
+        }
+        public static bool operator !=(Coord c1, Coord c2) {
+            return !(c1 == c2);
+        }
+    }
+    [System.Serializable]
+    public class Map {
+        public Coord mapSize;//地图尺寸
+        [Range(0, 1)]
+        public float obsPercent;//障碍物所占百分比
+        public int seed;//随机种子
+        public float minObsHeight;//障碍物最小高度
+        public float maxObsHeight;//障碍物最大高度
+        public Color foregroundColor;//前景色
+        public Color backgroundColor;//背景色
+
+        //地图的中心点,每个随机地图的中心点都是不能有障碍物的
+        public Coord mapCenter {
+            get {
+                return new Coord(mapSize.x / 2, mapSize.y / 2);
+            }
+        }
+
     }
 }
-[System.Serializable]
-public struct Coord {
-    public int x;
-    public int y;
-    public Transform trs;
-    public Coord(int x, int y, Transform self) {
-        this.x = x;
-        this.y = y;
-        this.trs = self;
-    }
-    //重载运算符,static, 必须返回bool类型
-    public static bool operator !=(Coord c1, Coord c2) {
-        return c1.x != c2.x || c1.y != c2.y;
-    }
-    public static bool operator ==(Coord c1, Coord c2) {
-        return c1.x == c2.x && c1.y == c2.y;
-    }
-}
+
